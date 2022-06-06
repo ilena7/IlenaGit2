@@ -1,0 +1,78 @@
+﻿@model CartViewModel
+
+@{
+    ViewData["Title"] = "Resumen del carrito";
+}
+
+
+@if (Model.CartItems.Count > 0)
+{
+    <h1>Resumen del carrito</h1>
+    <div class="cartWrapper ">
+        <div class="cartbg d-none">
+            <h3 class="text-center"> Redirigiéndote a paypal ... </h3>
+
+            <img src="~/Images/ajax-loader.gif" />
+        </div>
+
+        <table class="table">
+            <tr>
+                <th>Product</th>
+                <th>Cantidad</th>
+                <th></th>
+                <th>Precio</th>
+                <th>Total</th>
+
+            </tr>
+            @foreach (var item in Model.CartItems)
+            {
+                <tr>
+                    <td>@item.ProductNombre</td>
+                    <td>@item.Cantidad</td>
+                    <td>
+                        <a asp-action="Add" asp-route-id="@item.ProductId" class="btn btn-sm  btn-primary">+</a>
+                        <a asp-action="Decrease" asp-route-id="@item.ProductId" class="btn btn-sm  btn-success">-</a>
+                        <a asp-action="Remove" asp-route-id="@item.ProductId" class="btn btn-sm  btn-danger">Eliminar</a>
+
+                    </td>
+                    <td>@item.Precio.ToString("C2")</td>
+                    <td>@Model.CartItems.Where(x => x.ProductId == item.ProductId).Sum(x => x.Cantidad * x.Precio).ToString("C2")</td>
+
+                </tr>
+            }
+            <tr>
+                <td class="text-right" colspan="4">Gran Total: @Model.GrandTotal.ToString("C2")</td>
+            </tr>
+            <tr>
+                <td class="text-right" colspan="4">
+                    <a asp-action="Clear" class="btn btn-danger"> Limpiar Carrito</a>
+                    <a href="#" class="btn btn-primary checkout">Revisa </a>
+
+                </td>
+            </tr>
+        </table>
+    </div>
+}
+else
+{
+    <h3 class="display-4 text-center">Tu carrito está vacío.</h3>
+}
+
+<partial name="~/Views/Cart/_PaypalPartial.cshtml" for=" CartItems" />
+@section Scripts {
+    <script>
+        $(function () {
+            $("a.checkout").click(function (e) {
+                e.preventDefault();
+
+                $("div.cartbg").removeClass("d-none");
+                $.get("/cart/clear", {}, function () {
+                    $("form.paypalform").submit();
+
+                
+                        });
+                    });
+          });
+              
+    </script>
+}

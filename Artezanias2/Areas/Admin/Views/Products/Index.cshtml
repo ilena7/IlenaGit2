@@ -1,0 +1,70 @@
+﻿@model IEnumerable<Product>
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<h1>Productos</h1>
+
+<p>
+    <a asp-action="Create">Crear nuevo</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+
+            <th>
+                Nombre
+            </th>
+
+            <th>
+                Precio
+            </th>
+            <th>
+                Categoria
+            </th>
+            <th>
+                Imagen
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>
+                    @item.Nombre
+                </td>
+
+                <td>
+                    @item.Precio.ToString("C2")
+                </td>
+                <td>
+                    @item.Category.Nombre
+                </td>
+                <td>
+
+                    <img src="~/Media/Product/@item.Imagen" width="100" alt="" />
+
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
+                    <a class="confirmDeletion" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (ViewBag.TotalPages > 1)
+{
+    <div class="d-flex w-100 justify-content-center">
+        <pagination page-count="@ViewBag.TotalPages" page-target="/products/@ViewBag.CategorySlug" page-number="@ViewBag.PageNumber"
+                    page-range="@ViewBag.PageRange"></pagination>
+    </div>
+}
